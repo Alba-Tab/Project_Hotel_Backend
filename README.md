@@ -290,3 +290,173 @@ with schema_context('hotel_sol'):
 - **Los dominios determinan qué tenant se activa**
 
 ---
+
+## 🚀 Guía para Nuevos Desarrolladores
+
+### **Configuración Inicial Rápida**
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/Alba-Tab/Project_Hotel_Backend.git
+cd Project_Hotel_Backend
+
+# 2. Crear y activar entorno virtual
+python -m venv .venv
+.venv\Scripts\Activate.ps1  # Windows
+# source .venv/bin/activate  # Linux/Mac
+
+# 3. Instalar dependencias
+pip install -r requirements.txt
+
+# 4. Configurar base de datos PostgreSQL
+# Asegúrate de que PostgreSQL esté corriendo
+# Crear base de datos: CREATE DATABASE hotel_db;
+
+# 5. Configurar variables de entorno (opcional)
+# Copia .env.example a .env y ajusta las variables
+```
+
+### **Configuración de Migraciones (IMPORTANTE)**
+
+```bash
+# Como las migraciones no se versionan, debes generarlas localmente:
+
+# 1. Verificar configuración
+python manage.py check
+
+# 2. Crear migraciones para SHARED_APPS
+python manage.py makemigrations customers
+
+# 3. Migrar esquema público
+python manage.py migrate_schemas --shared
+
+# 4. Crear migraciones para TENANT_APPS
+python manage.py makemigrations usuarios
+python manage.py makemigrations --empty core habitaciones reservas finanzas
+
+# 5. Migrar todos los esquemas
+python manage.py migrate_schemas
+```
+
+### **Crear Tenant de Desarrollo**
+
+```bash
+# Ejecutar en shell de Django
+python manage.py shell
+
+# Copiar y pegar este código:
+from customers.models import Client, Domain
+
+# Crear tenant de desarrollo
+tenant = Client(
+    schema_name="dev_hotel",
+    name="Hotel Desarrollo",
+    paid_until="2025-12-31",
+    on_trial=False
+)
+tenant.save()
+
+# Crear dominio
+domain = Domain(
+    domain="devhotel.localhost",
+    tenant=tenant,
+    is_primary=True
+)
+domain.save()
+print("✅ Tenant de desarrollo creado!")
+exit()
+```
+
+### **Verificar Instalación**
+
+```bash
+# 1. Verificar esquemas creados
+python manage.py shell -c "
+from django.db import connection
+with connection.cursor() as cursor:
+    cursor.execute('SELECT schema_name FROM information_schema.schemata;')
+    schemas = [row[0] for row in cursor.fetchall() if row[0] not in ['information_schema', 'pg_catalog', 'pg_toast']]
+    print('Esquemas creados:', schemas)
+"
+
+# 2. Iniciar servidor
+python manage.py runserver
+
+# 3. Probar accesos:
+# - http://127.0.0.1:8000/ (esquema público)
+# - http://devhotel.localhost:8000/ (tenant desarrollo)
+```
+
+### **Comandos de Desarrollo Diario**
+
+```bash
+# Activar entorno virtual (siempre primero)
+.venv\Scripts\Activate.ps1
+
+# Iniciar servidor de desarrollo
+python manage.py runserver
+
+# Crear nuevas migraciones (cuando cambies modelos)
+python manage.py makemigrations
+python manage.py migrate_schemas
+
+# Ver estado de migraciones
+python manage.py showmigrations
+
+# Crear superusuario para tenant específico
+python manage.py create_tenant_superuser --schema=dev_hotel
+
+# Shell de Django (para pruebas rápidas)
+python manage.py shell
+```
+
+### **Solución de Problemas Comunes**
+
+```bash
+# Error: "No module named 'django'"
+# Solución: Activar entorno virtual
+.venv\Scripts\Activate.ps1
+
+# Error: "database 'hotel_db' does not exist"
+# Solución: Crear base de datos en PostgreSQL
+psql -U postgres -c "CREATE DATABASE hotel_db;"
+
+# Error: "Migration dependencies"
+# Solución: Recrear migraciones en orden
+python manage.py makemigrations customers
+python manage.py migrate_schemas --shared
+python manage.py makemigrations usuarios
+python manage.py migrate_schemas
+
+# Error: "Tenant not found"
+# Solución: Verificar que el dominio existe y apunta al tenant correcto
+python manage.py shell -c "from customers.models import Domain; print(Domain.objects.all())"
+
+# Limpiar migraciones (reinicio completo)
+# 1. Borrar archivos: rm apps/*/migrations/0*.py
+# 2. Limpiar BD: DROP DATABASE hotel_db; CREATE DATABASE hotel_db;
+# 3. Seguir proceso de configuración inicial
+```
+
+### **Estructura de Archivos Importantes**
+
+```
+📁 Archivos que SÍ se versionan:
+├── 📄 manage.py
+├── 📄 requirements.txt
+├── 📄 README.md
+├── 📁 cadena_hoteleria/settings.py (configuración)
+├── 📁 customers/models.py (modelos de tenants)
+├── 📁 apps/*/models.py (modelos de negocio)
+└── 📁 */urls.py (configuración de URLs)
+
+📁 Archivos que NO se versionan (.gitignore):
+├── 📁 .venv/ (entorno virtual)
+├── 📁 **/__pycache__/ (archivos compilados)
+├── 📁 **/migrations/0*.py (migraciones automáticas)
+├── 📄 .env (variables de entorno locales)
+├── 📄 *.log (archivos de log)
+└── 📁 media/ (archivos subidos por usuarios)
+```
+
+---

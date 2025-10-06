@@ -61,6 +61,39 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Django Multi-tenant específicos
+# Ignorar migraciones automáticas pero mantener las esenciales
+migrations/0*.py
+**/migrations/0*.py
+# Mantener solo __init__.py y migraciones críticas
+!**/migrations/__init__.py
+!customers/migrations/0001_initial.py
+!apps/usuarios/migrations/0001_initial.py
+
+# Archivos de configuración sensibles
+settings_local.py
+settings_production.py
+.django
+django.log
+
+# Media files (uploads de usuarios)
+media/
+staticfiles/
+static_root/
+
+# Archivos de base de datos
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos temporales de Django
+*.tmp
+celerybeat-schedule
+celerybeat.pid
+
+# Archivos de sessiones
+django_session/
+
 # Flask stuff:
 instance/
 .webassets-cache
@@ -136,6 +169,11 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
+.env.development
+.env.production
+.env.staging
+.env.test
 .envrc
 .venv
 env/
@@ -143,6 +181,29 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Archivos de configuración específicos del servidor
+nginx.conf
+apache.conf
+gunicorn.conf
+uwsgi.ini
+docker-compose.override.yml
+
+# Archivos de backup de base de datos
+*.sql
+*.dump
+*.backup
+backup/
+backups/
+
+# Certificados SSL
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+ssl/
+certs/
 
 # Spyder project settings
 .spyderproject
@@ -205,3 +266,68 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# === PROYECTO HOTELERÍA ESPECÍFICOS ===
+
+# Logs específicos del hotel
+hotel_logs/
+*.hotel.log
+access.log
+error.log
+
+# Archivos temporales del sistema hotelero
+temp/
+tmp/
+uploads/
+downloads/
+reports/
+exports/
+
+# Archivos de configuración de tenants
+tenant_configs/
+client_configs/
+
+# Archivos de prueba y desarrollo
+test_data/
+dummy_data/
+seed_data/
+fixtures/test/
+
+# Documentación generada automáticamente
+docs/build/
+docs/_build/
+api_docs/
+swagger_docs/
+
+# Archivos de IDE y editores
+.vscode/settings.json
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/.ropeproject
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Archivos de sistema Windows
+desktop.ini
+$RECYCLE.BIN/
+
+# Archivos de profiling y debugging
+*.prof
+*.pstats
+.coverage.*
+coverage_html/
+.benchmarks/
+
+# Archivos de traducción compilados
+locale/*/LC_MESSAGES/*.mo
+
+# Redis dumps
+dump.rdb
+
+# Archivos de monitoreo
+monitoring/
+metrics/
+*.pid

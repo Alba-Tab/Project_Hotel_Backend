@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'apps.habitaciones',
     'apps.reservas',
     'apps.finanzas',
+    'apps.hoteles',
     # 'customers',  # Comentado para funcionamiento normal
 ]
 
@@ -117,9 +118,9 @@ DATABASES = {
         "ENGINE": 'django.db.backends.postgresql',  # Backend normal de PostgreSQL
         "NAME": os.getenv('DATABASE_NAME', 'hotel_db'),
         "USER": os.getenv('DATABASE_USER', 'postgres'),
-        "PASSWORD": os.getenv('DATABASE_PASSWORD', '1234'),
+        "PASSWORD": os.getenv('DATABASE_PASSWORD', 'admin'),
         "HOST": os.getenv('DATABASE_HOST', '127.0.0.1'),
-        "PORT": os.getenv('DATABASE_PORT', '5432'),
+        "PORT": os.getenv('DATABASE_PORT', '5433'),
     }
 }
 
@@ -177,10 +178,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': int(os.getenv('DRF_PAGE_SIZE', '20')),
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticated',
     ],
 }

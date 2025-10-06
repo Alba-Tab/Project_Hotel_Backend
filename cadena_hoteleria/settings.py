@@ -1,14 +1,18 @@
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Cargar variables de entorno desde .env
+load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = 'django-insecure-dhl8e*%m-d7-9(7m1v=+@eo1!qudi)%+p^og@!whyw68ap)f0)'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dhl8e*%m-d7-9(7m1v=+@eo1!qudi)%+p^og@!whyw68ap)f0)')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # aplicacioness definidas para el esquema publico
 SHARED_APPS = [
@@ -82,12 +86,11 @@ WSGI_APPLICATION = 'cadena_hoteleria.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": 'django_tenants.postgresql_backend',
-        #"ENGINE": 'django.db.backends.postgresql',
-        "NAME": "hotel_db",
-        "USER": "postgres", 
-        "PASSWORD": "1234", # Cambia esto por tu password real
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
+        "NAME": os.getenv('DATABASE_NAME', 'hotel_db'),
+        "USER": os.getenv('DATABASE_USER', 'postgres'),
+        "PASSWORD": os.getenv('DATABASE_PASSWORD', '1234'),
+        "HOST": os.getenv('DATABASE_HOST', '127.0.0.1'),
+        "PORT": os.getenv('DATABASE_PORT', '5432'),
     }
 }
 DATABASE_ROUTERS = [
@@ -112,21 +115,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LANGUAGE_CODE = 'es-es'
+LANGUAGE_CODE = os.getenv('LANGUAGE_CODE', 'es-es')
 
-TIME_ZONE = 'America/La_Paz'
+TIME_ZONE = os.getenv('TIME_ZONE', 'America/La_Paz')
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = os.getenv('USE_TZ', 'True').lower() == 'true'
 
-STATIC_URL = 'static/'
+STATIC_URL = os.getenv('STATIC_URL', '/static/')
 STATIC_ROOT = BASE_DIR / "staticfiles"
+MEDIA_URL = os.getenv('MEDIA_URL', '/media/')
+MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': int(os.getenv('DRF_PAGE_SIZE', '20')),
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',

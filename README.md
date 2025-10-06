@@ -189,7 +189,7 @@ python manage.py create_tenant_superuser --schema=hotel_sol
 
 ## 📁 Estructura del Proyecto
 
-```
+```BASH
 ├── cadena_hoteleria/          # Configuración principal
 │   ├── settings.py           # Configuración Django + django-tenants
 │   ├── urls.py              # URLs principales
@@ -440,7 +440,8 @@ python manage.py shell -c "from customers.models import Domain; print(Domain.obj
 
 ### **Estructura de Archivos Importantes**
 
-```
+```BASH
+
 📁 Archivos que SÍ se versionan:
 ├── 📄 manage.py
 ├── 📄 requirements.txt

@@ -14,44 +14,69 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
-# aplicacioness definidas para el esquema publico
-SHARED_APPS = [
-    "django_tenants",
-    "customers",
-    
+# ========================================
+# CONFIGURACIÓN MULTI-TENANT (COMENTADA)
+# Descomenta estas líneas para activar multi-tenant
+# ========================================
+# SHARED_APPS = [
+#     "django_tenants",
+#     "customers",
+#     
+#     'django.contrib.contenttypes',
+#     'django.contrib.sessions',
+#     'django.contrib.messages',
+#     'django.contrib.staticfiles',
+#     'django.contrib.admin',
+#     'django.contrib.auth', 
+#     "rest_framework",
+# ]
+# TENANT_APPS = [
+#     'django.contrib.contenttypes',
+#     'django.contrib.sessions',
+#     'django.contrib.auth', #necesario para el modelo de usuario personalizado por esquema
+#     "apps.usuarios",
+#     'django.contrib.admin',
+#     'rest_framework.authtoken',
+#     "core",
+#     "apps.reservas",
+#     "apps.habitaciones",
+#     "apps.finanzas",
+# ]
+# INSTALLED_APPS = list(SHARED_APPS) + [a for a in TENANT_APPS if a not in SHARED_APPS]
+# TENANT_MODEL = "customers.Client"
+# TENANT_DOMAIN_MODEL = "customers.Domain"
+# PUBLIC_SCHEMA_NAME = "public"
+# TENANT_URLCONF = "cadena_hoteleria.urls_tenant" 
+# PUBLIC_SCHEMA_URLCONF = "cadena_hoteleria.urls_public"
+
+# ========================================
+# CONFIGURACIÓN DJANGO NORMAL
+# ========================================
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    "rest_framework",
-]
-TENANT_APPS = [
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.auth', #necesario para el modelo de usuario personalizado por esquema
-    "apps.usuarios",
-    'django.contrib.admin',
+    # Django REST Framework
+    'rest_framework',
     'rest_framework.authtoken',
-    "core",
-    "apps.reservas",
-    "apps.habitaciones",
-    "apps.finanzas",
+    
+    # Nuestras aplicaciones
+    'core',
+    'apps.usuarios',
+    'apps.habitaciones',
+    'apps.reservas',
+    'apps.finanzas',
+    # 'customers',  # Comentado para funcionamiento normal
 ]
-
-INSTALLED_APPS = list(SHARED_APPS) + [a for a in TENANT_APPS if a not in SHARED_APPS]
-
-TENANT_MODEL = "customers.Client"
-TENANT_DOMAIN_MODEL = "customers.Domain"
-# Esquema publico default donde se guarda las configuraciones globales y shared aplicaciones
-PUBLIC_SCHEMA_NAME = "public"
-TENANT_URLCONF = "cadena_hoteleria.urls_tenant"
-PUBLIC_SCHEMA_URLCONF = "cadena_hoteleria.urls_public"
-                        #hotel_prueba.localhost
 
 AUTH_USER_MODEL = "usuarios.Usuario"
+
 MIDDLEWARE = [
-    "django_tenants.middleware.main.TenantMainMiddleware", 
+    # "django_tenants.middleware.main.TenantMainMiddleware",  # Comentado para funcionamiento normal
     
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,7 +85,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
 ]
 
 ROOT_URLCONF = 'cadena_hoteleria.urls'
@@ -83,9 +107,14 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cadena_hoteleria.wsgi.application'
 
 
+# ========================================
+# CONFIGURACIÓN DE BASE DE DATOS
+# ========================================
+
+# Configuración normal de PostgreSQL
 DATABASES = {
     "default": {
-        "ENGINE": 'django_tenants.postgresql_backend',
+        "ENGINE": 'django.db.backends.postgresql',  # Backend normal de PostgreSQL
         "NAME": os.getenv('DATABASE_NAME', 'hotel_db'),
         "USER": os.getenv('DATABASE_USER', 'postgres'),
         "PASSWORD": os.getenv('DATABASE_PASSWORD', '1234'),
@@ -93,9 +122,24 @@ DATABASES = {
         "PORT": os.getenv('DATABASE_PORT', '5432'),
     }
 }
-DATABASE_ROUTERS = [
-    'django_tenants.routers.TenantSyncRouter',
-]
+
+# ========================================
+# CONFIGURACIÓN MULTI-TENANT DB (COMENTADA)
+# Descomenta para activar multi-tenant
+# ========================================
+# DATABASES = {
+#     "default": {
+#         "ENGINE": 'django_tenants.postgresql_backend',
+#         "NAME": os.getenv('DATABASE_NAME', 'hotel_db'),
+#         "USER": os.getenv('DATABASE_USER', 'postgres'), 
+#         "PASSWORD": os.getenv('DATABASE_PASSWORD', '1234'),
+#         "HOST": os.getenv('DATABASE_HOST', '127.0.0.1'),
+#         "PORT": os.getenv('DATABASE_PORT', '5432'),
+#     }
+# }
+# DATABASE_ROUTERS = [
+#     'django_tenants.routers.TenantSyncRouter',
+# ]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

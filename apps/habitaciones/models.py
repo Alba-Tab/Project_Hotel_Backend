@@ -3,6 +3,11 @@ from apps.hoteles.models import Hotel
 
 
 class Habitacion(models.Model):
+    DISPONIBLE = 'disponible'
+    OCUPADA = 'ocupada'
+    MANTENIMIENTO = 'mantenimiento'
+    RESERVADA = 'reservada'
+
     TIPO_CHOICES = [
         ('individual', 'Individual'),
         ('doble', 'Doble'),
@@ -10,9 +15,10 @@ class Habitacion(models.Model):
     ]
 
     ESTADO_CHOICES = [
-        ('disponible', 'Disponible'),
-        ('ocupada', 'Ocupada'),
-        ('mantenimiento', 'En mantenimiento'),
+        (DISPONIBLE, 'Disponible'),
+        (OCUPADA, 'Ocupada'),
+        (MANTENIMIENTO, 'Mantenimiento'),
+        (RESERVADA, 'Reservada'),
     ]
 
     hotel = models.ForeignKey(Hotel, on_delete=models.CASCADE, related_name='habitaciones')
